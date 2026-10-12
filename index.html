@@ -76,8 +76,28 @@
             min-height: 250px;
         }
 
+        /* Контейнер для прокрутки длинного списка локаций */
+        .scrollable-list {
+            max-height: 260px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding-right: 4px;
+            margin-bottom: 10px;
+        }
+
+        /* Кастомный скроллбар для эстетики */
+        .scrollable-list::-webkit-scrollbar {
+            width: 4px;
+        }
+        .scrollable-list::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+
         .btn {
-            padding: 14px 16px;
+            padding: 12px 16px;
             font-size: 14px;
             font-weight: 500;
             border: none;
@@ -101,6 +121,7 @@
             background: rgba(255, 255, 255, 0.04);
             color: #ffffff;
             border: 1px solid rgba(255, 255, 255, 0.08);
+            flex-shrink: 0;
         }
 
         .btn-option:hover {
@@ -119,6 +140,7 @@
             border-radius: 10px;
             border: none;
             cursor: pointer;
+            width: 100%;
         }
         .btn-back:hover {
             background: rgba(255, 255, 255, 0.15);
@@ -180,8 +202,8 @@
         }
 
         .btn-submit {
-            background: #ffffff;
-            color: #0b0b0f;
+            background: #25D366; /* Фирменный зеленый цвет WhatsApp */
+            color: #ffffff;
             font-weight: 600;
             width: 100%;
             padding: 14px;
@@ -193,7 +215,7 @@
         }
 
         .btn-submit:hover {
-            background: #e5e7eb;
+            background: #22bf5b;
             transform: translateY(-1px);
         }
 
@@ -215,15 +237,15 @@
             <div class="buttons" id="btnContainer">
                 <button class="btn btn-option" onclick="showSubMenu('coffee')">
                     ☕️ Кофейни
-                    <span>Bowler, Jump, Nedelka и др.</span>
+                    <span>Много уютных мест в центре</span>
                 </button>
                 <button class="btn btn-option" onclick="showSubMenu('anticafe')">
-                    🎲 Антикафе
-                    <span>The Time, Not Bad и др.</span>
+                    🎲 Антикафе и пространства
+                    <span>Игры, приставки, чай и тепло</span>
                 </button>
                 <button class="btn btn-option" onclick="showSubMenu('cinema')">
                     🎬 Кинотеатры
-                    <span>Kinopark (Esentai / Dostyk)</span>
+                    <span>Mega, Esentai, Dostyk и др.</span>
                 </button>
                 <button class="btn btn-escape" id="noBtn" onmouseover="moveButton()" onclick="moveButton()">Никуда 🙄</button>
             </div>
@@ -234,9 +256,9 @@
             <button class="btn-back" onclick="goBackToCategories()">← Назад к категориям</button>
             <div class="badge" id="subCategoryTitle">Выбор места</div>
             <h1>Выбери локацию</h1>
-            <p>Топовые точки города.</p>
+            <p>Лучшие точки города.</p>
             
-            <div class="buttons" id="subButtonsContainer">
+            <div class="scrollable-list" id="subButtonsContainer">
                 <!-- Сюда динамически подгружаются локации -->
             </div>
         </div>
@@ -246,7 +268,7 @@
             <button class="btn-back" onclick="goBackToSubMenu()">← Назад к выбору места</button>
             <div class="badge" id="selectedBadgeName">Локация выбрана</div>
             <h1>Когда тебе удобно?</h1>
-            <p>Выбери день и время, и бронь отправится мне.</p>
+            <p>Выбери день и время, и бронь прилетит мне в WhatsApp.</p>
             
             <div class="form-group">
                 <label>Дата встречи</label>
@@ -258,7 +280,7 @@
                 <input type="time" id="timeInput" class="form-control" value="18:00">
             </div>
 
-            <button class="btn-submit" onclick="sendToTelegram()">Отправить бронь в Telegram ✈️</button>
+            <button class="btn-submit" onclick="sendToWhatsApp()">Отправить бронь в WhatsApp 🟢</button>
         </div>
     </div>
 
@@ -266,20 +288,26 @@
         let selectedCategory = '';
         let chosenLocation = '';
 
-        // База локаций по категориям
+        // Расширенная база локаций
         const locationsData = {
             coffee: [
-                { name: 'Bowler Coffee (на Панфилова)', desc: 'Стильно, атмосферно, отличный кофе' },
-                { name: 'Jump Coffee (в центре)', desc: 'Уютное место для долгих разговоров' },
-                { name: 'Nedelka (на Абая-Фурманова)', desc: 'Классная атмосфера и десерты' }
+                { name: 'Bowler Coffee (на Панфилова)', desc: 'Стильно, атмосферно, топовый кофе' },
+                { name: 'Jump Coffee (в центре)', desc: 'Уютно, классные десерты' },
+                { name: 'Nedelka (на Абая-Фурманова)', desc: 'Классика для встреч в центре' },
+                { name: 'Paul (Достык / Esentai)', desc: 'Французская выпечка и эстетика' },
+                { name: 'Mad Coffee (на Гоголя)', desc: 'Молодежное и оживленное место' }
             ],
             anticafe: [
-                { name: 'Антикафе "The Time"', desc: 'Приставки, VR, чай и печеньки' },
-                { name: 'Антикафе "Not Bad"', desc: 'Настолки, уютные диванчики' }
+                { name: 'Антикафе "The Time"', desc: 'Приставки, VR, настолки и чай' },
+                { name: 'Антикафе "Not Bad"', desc: 'Много игр, ламповая атмосфера' },
+                { name: 'Лофт-пространство "Freedom"', desc: 'Удобные диваны и проектор' }
             ],
             cinema: [
-                { name: 'Kinopark 11 IMAX (Esentai Mall)', desc: 'Премиум зал, максимальный комфорт' },
-                { name: 'Kinopark 16 (Dostyk Plaza)', desc: 'Удобное расположение, отличный звук' }
+                { name: 'Kinopark 11 IMAX (Esentai Mall)', desc: 'Премиум-кинотеатр, огромный экран' },
+                { name: 'Cinemax (Dostyk Plaza)', desc: 'Комфортные кресла, отличный звук' },
+                { name: 'Kinopark 16 (Dostyk Plaza)', desc: 'Популярное место в центре' },
+                { name: 'Kinoplexx (Mega Center Alma-Ata)', desc: 'Удобно заехать после прогулки в Меге' },
+                { name: 'Kinopark (Sputnik)', desc: 'Хороший вариант для спальных районов' }
             ]
         };
 
@@ -332,7 +360,7 @@
             document.getElementById('step2').style.display = 'block';
         }
 
-        function sendToTelegram() {
+        function sendToWhatsApp() {
             const date = document.getElementById('dateInput').value;
             const time = document.getElementById('timeInput').value;
 
@@ -341,13 +369,15 @@
                 return;
             }
 
-            const myTelegramUsername = 'n_vud_zi'; 
+            // Твой номер ватсап в международном формате (без плюса)
+            const myPhoneNumber = '77789249246'; 
 
             const text = encodeURIComponent(`Привет! Я выбрала свидание ❤️\n\n📍 Место: ${chosenLocation}\n📅 Дата: ${date}\n⏰ Время: ${time}`);
             
-            window.location.href = `https://t.me/${myTelegramUsername}?text=${text}`;
+            window.location.href = `https://wa.me/${myPhoneNumber}?text=${text}`;
         }
     </script>
 
 </body>
-</html>
+    </html>
+                    
