@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservation • Almaty</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #0b0b0f;
+            background-image: 
+                radial-gradient(circle at 15% 20%, rgba(120, 80, 255, 0.12) 0%, transparent 40%),
+                radial-gradient(circle at 85% 80%, rgba(255, 80, 120, 0.1) 0%, transparent 40%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            color: #f3f4f6;
+        }
+
+        .card {
+            background: rgba(22, 22, 30, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 36px 28px;
+            border-radius: 28px;
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            max-width: 440px;
+            width: 90%;
+            position: relative;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 14px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: #9ca3af;
+            margin-bottom: 14px;
+        }
+
+        h1 {
+            font-size: 22px;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        p {
+            color: #9ca3af;
+            font-size: 14px;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            position: relative;
+            min-height: 250px;
+        }
+
+        .btn {
+            padding: 14px 16px;
+            font-size: 14px;
+            font-weight: 500;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            width: 100%;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .btn span {
+            font-size: 11px;
+            color: #9ca3af;
+            font-weight: 400;
+        }
+
+        .btn-option {
+            background: rgba(255, 255, 255, 0.04);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .btn-option:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.18);
+            transform: translateY(-2px);
+        }
+
+        .btn-back {
+            background: rgba(255, 255, 255, 0.08);
+            color: #ffffff;
+            font-size: 13px;
+            padding: 10px;
+            text-align: center;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .btn-escape {
+            background: transparent;
+            color: #6b7280;
+            border: 1.5px dashed rgba(255, 255, 255, 0.1);
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            text-align: center;
+            display: block;
+        }
+        .btn-escape:hover {
+            color: #9ca3af;
+        }
+
+        /* Шаги */
+        .step-content {
+            display: none;
+            text-align: left;
+            animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            color: #9ca3af;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 14px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: #ffffff;
+            font-size: 15px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: rgba(120, 80, 255, 0.6);
+        }
+
+        input[type="date"]::-webkit-calendar-picker-indicator,
+        input[type="time"]::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+            cursor: pointer;
+        }
+
+        .btn-submit {
+            background: #ffffff;
+            color: #0b0b0f;
+            font-weight: 600;
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+            margin-top: 5px;
+        }
+
+        .btn-submit:hover {
+            background: #e5e7eb;
+            transform: translateY(-1px);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <!-- ШАГ 1: Выбор категории -->
+        <div id="step1">
+            <div class="badge">Алматы • Октябрь</div>
+            <h1>Куда отправимся?</h1>
+            <p>Выбери направление на вечер.</p>
+            
+            <div class="buttons" id="btnContainer">
+                <button class="btn btn-option" onclick="showSubMenu('coffee')">
+                    ☕️ Кофейни
+                    <span>Bowler, Jump, Nedelka и др.</span>
+                </button>
+                <button class="btn btn-option" onclick="showSubMenu('anticafe')">
+                    🎲 Антикафе
+                    <span>The Time, Not Bad и др.</span>
+                </button>
+                <button class="btn btn-option" onclick="showSubMenu('cinema')">
+                    🎬 Кинотеатры
+                    <span>Kinopark (Esentai / Dostyk)</span>
+                </button>
+                <button class="btn btn-escape" id="noBtn" onmouseover="moveButton()" onclick="moveButton()">Никуда 🙄</button>
+            </div>
+        </div>
+
+        <!-- ШАГ 2: Подменю (выбор конкретной локации) -->
+        <div id="step2" class="step-content">
+            <button class="btn-back" onclick="goBackToCategories()">← Назад к категориям</button>
+            <div class="badge" id="subCategoryTitle">Выбор места</div>
+            <h1>Выбери локацию</h1>
+            <p>Топовые точки города.</p>
+            
+            <div class="buttons" id="subButtonsContainer">
+                <!-- Сюда динамически подгружаются локации -->
+            </div>
+        </div>
+
+        <!-- ШАГ 3: Выбор даты и времени -->
+        <div id="step3" class="step-content">
+            <button class="btn-back" onclick="goBackToSubMenu()">← Назад к выбору места</button>
+            <div class="badge" id="selectedBadgeName">Локация выбрана</div>
+            <h1>Когда тебе удобно?</h1>
+            <p>Выбери день и время, и бронь отправится мне.</p>
+            
+            <div class="form-group">
+                <label>Дата встречи</label>
+                <input type="date" id="dateInput" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label>Время</label>
+                <input type="time" id="timeInput" class="form-control" value="18:00">
+            </div>
+
+            <button class="btn-submit" onclick="sendToTelegram()">Отправить бронь в Telegram ✈️</button>
+        </div>
+    </div>
+
+    <script>
+        let selectedCategory = '';
+        let chosenLocation = '';
+
+        // База локаций по категориям
+        const locationsData = {
+            coffee: [
+                { name: 'Bowler Coffee (на Панфилова)', desc: 'Стильно, атмосферно, отличный кофе' },
+                { name: 'Jump Coffee (в центре)', desc: 'Уютное место для долгих разговоров' },
+                { name: 'Nedelka (на Абая-Фурманова)', desc: 'Классная атмосфера и десерты' }
+            ],
+            anticafe: [
+                { name: 'Антикафе "The Time"', desc: 'Приставки, VR, чай и печеньки' },
+                { name: 'Антикафе "Not Bad"', desc: 'Настолки, уютные диванчики' }
+            ],
+            cinema: [
+                { name: 'Kinopark 11 IMAX (Esentai Mall)', desc: 'Премиум зал, максимальный комфорт' },
+                { name: 'Kinopark 16 (Dostyk Plaza)', desc: 'Удобное расположение, отличный звук' }
+            ]
+        };
+
+        function moveButton() {
+            const btn = document.getElementById('noBtn');
+            const container = document.getElementById('btnContainer');
+            
+            const maxX = container.clientWidth - btn.clientWidth;
+            const maxY = 180;
+            
+            const randomX = Math.floor(Math.random() * Math.max(0, maxX));
+            const randomY = Math.floor(Math.random() * Math.max(0, maxY));
+            
+            btn.style.left = randomX + 'px';
+            btn.style.bottom = randomY + 'px';
+        }
+
+        function showSubMenu(category) {
+            selectedCategory = category;
+            document.getElementById('step1').style.display = 'none';
+            document.getElementById('step2').style.display = 'block';
+
+            const container = document.getElementById('subButtonsContainer');
+            container.innerHTML = '';
+
+            // Заполняем список локаций для выбранной категории
+            locationsData[category].forEach(loc => {
+                const btn = document.createElement('button');
+                btn.className = 'btn btn-option';
+                btn.innerHTML = `${loc.name}<span>${loc.desc}</span>`;
+                btn.onclick = () => selectLocation(loc.name);
+                container.appendChild(btn);
+            });
+        }
+
+        function selectLocation(locationName) {
+            chosenLocation = locationName;
+            document.getElementById('step2').style.display = 'none';
+            document.getElementById('step3').style.display = 'block';
+            document.getElementById('selectedBadgeName').innerText = locationName;
+        }
+
+        function goBackToCategories() {
+            document.getElementById('step2').style.display = 'none';
+            document.getElementById('step1').style.display = 'block';
+        }
+
+        function goBackToSubMenu() {
+            document.getElementById('step3').style.display = 'none';
+            document.getElementById('step2').style.display = 'block';
+        }
+
+        function sendToTelegram() {
+            const date = document.getElementById('dateInput').value;
+            const time = document.getElementById('timeInput').value;
+
+            if (!date) {
+                alert('Пожалуйста, выбери дату свидания!');
+                return;
+            }
+
+            const myTelegramUsername = 'n_vud_zi'; 
+
+            const text = encodeURIComponent(`Привет! Я выбрала свидание ❤️\n\n📍 Место: ${chosenLocation}\n📅 Дата: ${date}\n⏰ Время: ${time}`);
+            
+            window.location.href = `https://t.me/${myTelegramUsername}?text=${text}`;
+        }
+    </script>
+
+</body>
+</html>
