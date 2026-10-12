@@ -76,7 +76,6 @@
             min-height: 250px;
         }
 
-        /* Контейнер для прокрутки длинного списка локаций */
         .scrollable-list {
             max-height: 260px;
             overflow-y: auto;
@@ -87,7 +86,6 @@
             margin-bottom: 10px;
         }
 
-        /* Кастомный скроллбар для эстетики */
         .scrollable-list::-webkit-scrollbar {
             width: 4px;
         }
@@ -160,7 +158,6 @@
             color: #9ca3af;
         }
 
-        /* Шаги */
         .step-content {
             display: none;
             text-align: left;
@@ -202,7 +199,7 @@
         }
 
         .btn-submit {
-            background: #25D366; /* Фирменный зеленый цвет WhatsApp */
+            background: #25D366;
             color: #ffffff;
             font-weight: 600;
             width: 100%;
@@ -228,7 +225,7 @@
 <body>
 
     <div class="card">
-        <!-- ШАГ 1: Выбор категории -->
+        <!-- ШАГ 1: Главное меню -->
         <div id="step1">
             <div class="badge">Алматы • Октябрь</div>
             <h1>Куда отправимся?</h1>
@@ -236,37 +233,37 @@
             
             <div class="buttons" id="btnContainer">
                 <button class="btn btn-option" onclick="showSubMenu('coffee')">
-                    ☕️ Кофейни
-                    <span>Много уютных мест в центре</span>
+                    ☕️ Атмосферные кофейни
+                    <span>Bowler, Jump, Nedelka, Paul и др.</span>
                 </button>
                 <button class="btn btn-option" onclick="showSubMenu('anticafe')">
                     🎲 Антикафе и пространства
-                    <span>Игры, приставки, чай и тепло</span>
+                    <span>Некафе, Как дома, MyRoom, VIP-кинорумы</span>
                 </button>
                 <button class="btn btn-option" onclick="showSubMenu('cinema')">
-                    🎬 Кинотеатры
-                    <span>Mega, Esentai, Dostyk и др.</span>
+                    🎬 Кинотеатры Алматы
+                    <span>Esentai, Dostyk Plaza, Mega, Sary-Arka</span>
                 </button>
                 <button class="btn btn-escape" id="noBtn" onmouseover="moveButton()" onclick="moveButton()">Никуда 🙄</button>
             </div>
         </div>
 
-        <!-- ШАГ 2: Подменю (выбор конкретной локации) -->
+        <!-- ШАГ 2: Подменю (выбор конкретного места) -->
         <div id="step2" class="step-content">
             <button class="btn-back" onclick="goBackToCategories()">← Назад к категориям</button>
-            <div class="badge" id="subCategoryTitle">Выбор места</div>
+            <div class="badge" id="subCategoryTitle">Выбор</div>
             <h1>Выбери локацию</h1>
-            <p>Лучшие точки города.</p>
+            <p id="subCategoryDesc">Лучшие точки города.</p>
             
             <div class="scrollable-list" id="subButtonsContainer">
-                <!-- Сюда динамически подгружаются локации -->
+                <!-- Сюда подгружаются элементы -->
             </div>
         </div>
 
         <!-- ШАГ 3: Выбор даты и времени -->
         <div id="step3" class="step-content">
-            <button class="btn-back" onclick="goBackToSubMenu()">← Назад к выбору места</button>
-            <div class="badge" id="selectedBadgeName">Локация выбрана</div>
+            <button class="btn-back" onclick="goBackToSubMenu()">← Назад к выбору</button>
+            <div class="badge" id="selectedBadgeName">Выбор сделан</div>
             <h1>Когда тебе удобно?</h1>
             <p>Выбери день и время, и бронь прилетит мне в WhatsApp.</p>
             
@@ -288,27 +285,40 @@
         let selectedCategory = '';
         let chosenLocation = '';
 
-        // Расширенная база локаций
-        const locationsData = {
-            coffee: [
-                { name: 'Bowler Coffee (на Панфилова)', desc: 'Стильно, атмосферно, топовый кофе' },
-                { name: 'Jump Coffee (в центре)', desc: 'Уютно, классные десерты' },
-                { name: 'Nedelka (на Абая-Фурманова)', desc: 'Классика для встреч в центре' },
-                { name: 'Paul (Достык / Esentai)', desc: 'Французская выпечка и эстетика' },
-                { name: 'Mad Coffee (на Гоголя)', desc: 'Молодежное и оживленное место' }
-            ],
-            anticafe: [
-                { name: 'Антикафе "The Time"', desc: 'Приставки, VR, настолки и чай' },
-                { name: 'Антикафе "Not Bad"', desc: 'Много игр, ламповая атмосфера' },
-                { name: 'Лофт-пространство "Freedom"', desc: 'Удобные диваны и проектор' }
-            ],
-            cinema: [
-                { name: 'Kinopark 11 IMAX (Esentai Mall)', desc: 'Премиум-кинотеатр, огромный экран' },
-                { name: 'Cinemax (Dostyk Plaza)', desc: 'Комфортные кресла, отличный звук' },
-                { name: 'Kinopark 16 (Dostyk Plaza)', desc: 'Популярное место в центре' },
-                { name: 'Kinoplexx (Mega Center Alma-Ata)', desc: 'Удобно заехать после прогулки в Меге' },
-                { name: 'Kinopark (Sputnik)', desc: 'Хороший вариант для спальных районов' }
-            ]
+        // Проверенная база реальных локаций Алматы
+        const categoriesData = {
+            coffee: {
+                title: 'Кофейни в Алматы',
+                desc: 'Уютные места для долгих разговоров и десертов',
+                items: [
+                    { name: '☕️ Bowler Coffee (ул. Панфилова)', desc: 'Стильно, атмосферно, центр города' },
+                    { name: '☕️ Jump Coffee (в центре)', desc: 'Уютно, отличный выбор напитков' },
+                    { name: '☕️ Nedelka (пр. Абая / Фурманова)', desc: 'Классика для встреч с потрясающим видом' },
+                    { name: '☕️ Paul (Dostyk Plaza / Esentai)', desc: 'Французская эстетика и круассаны' },
+                    { name: '☕️ Mad Coffee (ул. Гоголя)', desc: 'Молодежное и оживленное место' }
+                ]
+            },
+            anticafe: {
+                title: 'Антикафе и пространства',
+                desc: 'Тепло, игры, приставки и приватность',
+                items: [
+                    { name: '🎲 Некафе (на Маркова / Тимирязева)', desc: 'Настолки, приставки, чай и сладости' },
+                    { name: '🎲 Антикафе "Как дома" (ул. Байзакова)', desc: 'Уютная атмосфера, приставки, аэрохоккей' },
+                    { name: '🎲 Антикафе MyRoom (пр. Гагарина)', desc: 'Настольные игры, приставки, уединение' },
+                    { name: '🎬 VIP Кинорум / Частный зал', desc: 'Отдельная комната, фильмы, диваны и PS5' }
+                ]
+            },
+            cinema: {
+                title: 'Кинотеатры Алматы',
+                desc: 'Премьеры, большой экран и попкорн',
+                items: [
+                    { name: '🍿 Kinopark 11 IMAX (Esentai Mall)', desc: 'Премиум-зал, огромный экран и комфорт' },
+                    { name: '🍿 Cinemax (Dostyk Plaza)', desc: 'Отличный звук Dolby Atmos, удобство' },
+                    { name: '🍿 Chaplin (ТРЦ Mega Alma-Ata)', desc: 'Залы с премиум-местами и 4DX' },
+                    { name: '🍿 Chaplin (ТРЦ Mega Park)', desc: 'Современный кинотеатр в центре' },
+                    { name: '🍿 Kinoplexx (ТРЦ Sary-Arka)', desc: 'Бюджетно, удобно и классический выбор' }
+                ]
+            }
         };
 
         function moveButton() {
@@ -325,20 +335,23 @@
             btn.style.bottom = randomY + 'px';
         }
 
-        function showSubMenu(category) {
-            selectedCategory = category;
+        function showSubMenu(categoryKey) {
+            selectedCategory = categoryKey;
+            const catData = categoriesData[categoryKey];
+
             document.getElementById('step1').style.display = 'none';
             document.getElementById('step2').style.display = 'block';
+            document.getElementById('subCategoryTitle').innerText = catData.title;
+            document.getElementById('subCategoryDesc').innerText = catData.desc;
 
             const container = document.getElementById('subButtonsContainer');
             container.innerHTML = '';
 
-            // Заполняем список локаций для выбранной категории
-            locationsData[category].forEach(loc => {
+            catData.items.forEach(item => {
                 const btn = document.createElement('button');
                 btn.className = 'btn btn-option';
-                btn.innerHTML = `${loc.name}<span>${loc.desc}</span>`;
-                btn.onclick = () => selectLocation(loc.name);
+                btn.innerHTML = `${item.name}<span>${item.desc}</span>`;
+                btn.onclick = () => selectLocation(item.name);
                 container.appendChild(btn);
             });
         }
@@ -369,15 +382,13 @@
                 return;
             }
 
-            // Твой номер ватсап в международном формате (без плюса)
             const myPhoneNumber = '77789249246'; 
-
-            const text = encodeURIComponent(`Привет! Я выбрала свидание ❤️\n\n📍 Место: ${chosenLocation}\n📅 Дата: ${date}\n⏰ Время: ${time}`);
+            const text = encodeURIComponent(`Привет! Я выбрала свидание ❤️\n\n📍 Локация: ${chosenLocation}\n📅 Дата: ${date}\n⏰ Время: ${time}`);
             
             window.location.href = `https://wa.me/${myPhoneNumber}?text=${text}`;
         }
     </script>
 
 </body>
-    </html>
-                    
+                    </html>
+    
